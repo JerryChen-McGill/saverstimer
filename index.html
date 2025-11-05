@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAVERS 计时器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .global-settings {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .total-time {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .total-label {
+            font-size: 1.1em;
+            font-weight: normal;
+        }
+
+        .total-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .global-settings h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .custom-time {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .custom-time input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .custom-time button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .custom-time button:hover {
+            background: #5568d3;
+        }
+
+        .activity-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .activity-item.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            transform: scale(1.02);
+        }
+
+        .activity-item.completed {
+            opacity: 0.6;
+            background: #e8f5e9;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .activity-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .activity-time {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .activity-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .activity-controls input {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .main-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .main-controls button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .pause-btn {
+            background: #ffa726;
+            color: white;
+        }
+
+        .pause-btn:hover {
+            background: #fb8c00;
+        }
+
+        .reset-btn {
+            background: #ef5350;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #e53935;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #666;
+            font-weight: bold;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SAVERS 计时器</h1>
+        
+        <div class="global-settings">
+            <div class="total-time">
+                <span class="total-label">总时长：</span>
+                <span class="total-value" id="totalTime">30:00</span>
+            </div>
+            <h3>快速设置（应用到所有活动）</h3>
+            <div class="preset-buttons">
+                <button class="preset-btn" onclick="setAllTimes(3)">每项 3 分钟</button>
+                <button class="preset-btn" onclick="setAllTimes(10)">每项 10 分钟</button>
+            </div>
+            <div class="custom-time">
+                <input type="number" id="customMinutes" min="1" max="60" placeholder="自定义分钟数">
+                <button onclick="applyCustomTime()">应用</button>
+            </div>
+        </div>
+
+        <div id="activities"></div>
+
+        <div class="main-controls">
+            <button class="start-btn" id="startBtn" onclick="startTimer()">开始</button>
+            <button class="pause-btn" id="pauseBtn" onclick="pauseTimer()" disabled>暂停</button>
+            <button class="reset-btn" onclick="resetTimer()">重置</button>
+        </div>
+
+        <div class="status" id="status">准备就绪</div>
+    </div>
+
+    <script>
+        const activities = [
+            { name: 'S - Silence (冥想)', time: 300 },
+            { name: 'A - Affirmations (肯定)', time: 300 },
+            { name: 'V - Visualization (想象)', time: 300 },
+            { name: 'E - Exercise (运动)', time: 300 },
+            { name: 'R - Reading (阅读)', time: 300 },
+            { name: 'S - Scribing (写作)', time: 300 }
+        ];
+
+        let currentIndex = 0;
+        let isRunning = false;
+        let isPaused = false;
+        let timer = null;
+        let remainingTime = 0;
+        let endTime = 0;
+
+        function initializeActivities() {
+            const container = document.getElementById('activities');
+            container.innerHTML = '';
+            
+            activities.forEach((activity, index) => {
+                const div = document.createElement('div');
+                div.className = 'activity-item';
+                div.id = `activity-${index}`;
+                div.innerHTML = `
+                    <div class="activity-header">
+                        <div class="activity-name">${activity.name}</div>
+                    </div>
+                    <div class="activity-time" id="time-${index}">${formatTime(activity.time)}</div>
+                    <div class="activity-controls">
+                        <input type="number" id="input-${index}" min="1" max="60" 
+                               value="${Math.floor(activity.time / 60)}" 
+                               onchange="updateActivityTime(${index})"
+                               placeholder="分钟">
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function setAllTimes(minutes) {
+            activities.forEach((activity, index) => {
+                activity.time = minutes * 60;
+                document.getElementById(`input-${index}`).value = minutes;
+                document.getElementById(`time-${index}`).textContent = formatTime(activity.time);
+            });
+            updateTotalTime();
+        }
+
+        function applyCustomTime() {
+            const minutes = parseInt(document.getElementById('customMinutes').value);
+            if (minutes && minutes > 0 && minutes <= 60) {
+                setAllTimes(minutes);
+                document.getElementById('customMinutes').value = '';
+            }
+        }
+
+        function updateActivityTime(index) {
+            const input = document.getElementById(`input-${index}`);
+            const minutes = parseInt(input.value);
+            if (minutes && minutes > 0 && minutes <= 60) {
+                activities[index].time = minutes * 60;
+                document.getElementById(`time-${index}`).textContent = formatTime(activities[index].time);
+                updateTotalTime();
+            }
+        }
+
+        function updateTotalTime() {
+            const total = activities.reduce((sum, activity) => sum + activity.time, 0);
+            document.getElementById('totalTime').textContent = formatTime(total);
+        }
+
+        function playBeep() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        function startTimer() {
+            if (isRunning && !isPaused) return;
+            
+            if (!isRunning) {
+                currentIndex = 0;
+                remainingTime = activities[currentIndex].time;
+                document.querySelectorAll('.activity-item').forEach(item => {
+                    item.classList.remove('active', 'completed');
+                });
+            }
+            
+            isRunning = true;
+            isPaused = false;
+            endTime = Date.now() + remainingTime * 1000;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            document.getElementById('status').textContent = `进行中: ${activities[currentIndex].name}`;
+            document.getElementById(`activity-${currentIndex}`).classList.add('active');
+            
+            timer = setInterval(() => {
+                const now = Date.now();
+                remainingTime = Math.max(0, Math.ceil((endTime - now) / 1000));
+                document.getElementById(`time-${currentIndex}`).textContent = formatTime(remainingTime);
+                
+                if (remainingTime <= 0) {
+                    playBeep();
+                    document.getElementById(`activity-${currentIndex}`).classList.remove('active');
+                    document.getElementById(`activity-${currentIndex}`).classList.add('completed');
+                    
+                    currentIndex++;
+                    
+                    if (currentIndex < activities.length) {
+                        remainingTime = activities[currentIndex].time;
+                        endTime = Date.now() + remainingTime * 1000;
+                        document.getElementById(`activity-${currentIndex}`).classList.add('active');
+                        document.getElementById('status').textContent = `进行中: ${activities[currentIndex].name}`;
+                    } else {
+                        clearInterval(timer);
+                        isRunning = false;
+                        document.getElementById('startBtn').disabled = false;
+                        document.getElementById('pauseBtn').disabled = true;
+                        document.getElementById('status').textContent = '全部完成！恭喜你！🎉';
+                        playBeep();
+                        setTimeout(playBeep, 200);
+                        setTimeout(playBeep, 400);
+                    }
+                }
+            }, 100);
+        }
+
+        function pauseTimer() {
+            if (!isRunning || isPaused) return;
+            
+            isPaused = true;
+            clearInterval(timer);
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('status').textContent = '已暂停';
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            isPaused = false;
+            currentIndex = 0;
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('status').textContent = '准备就绪';
+            
+            document.querySelectorAll('.activity-item').forEach(item => {
+                item.classList.remove('active', 'completed');
+            });
+            
+            activities.forEach((activity, index) => {
+                document.getElementById(`time-${index}`).textContent = formatTime(activity.time);
+            });
+        }
+
+        initializeActivities();
+        updateTotalTime();
+    </script>
+</body>
+</html>

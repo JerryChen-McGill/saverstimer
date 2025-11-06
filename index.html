@@ -356,26 +356,51 @@
             document.getElementById('totalTime').textContent = formatTime(total);
         }
 
+        let audioContext = null;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            // 在移动设备上，AudioContext 可能需要用户交互后才能使用
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
         function playBeep() {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
-            
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
+            try {
+                initAudioContext();
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                const now = audioContext.currentTime;
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.5);
+            } catch (error) {
+                console.log('播放提示音失败:', error);
+                // 如果音频播放失败，使用振动作为备选方案
+                if (navigator.vibrate) {
+                    navigator.vibrate(200);
+                }
+            }
         }
 
         function startTimer() {
             if (isRunning && !isPaused) return;
+            
+            // 初始化音频上下文（移动设备需要用户交互）
+            initAudioContext();
             
             if (!isRunning) {
                 currentIndex = 0;

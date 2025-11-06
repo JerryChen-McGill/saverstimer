@@ -94,21 +94,16 @@
             color: white;
         }
 
-        .custom-time {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .custom-time input {
-            flex: 1;
+        .preset-buttons input {
+            flex: 1.5;
             padding: 10px;
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 1em;
         }
 
-        .custom-time button {
+        .preset-buttons button:last-child {
+            flex: 1;
             padding: 10px 20px;
             background: #667eea;
             color: white;
@@ -119,7 +114,7 @@
             transition: background 0.3s;
         }
 
-        .custom-time button:hover {
+        .preset-buttons button:last-child:hover {
             background: #5568d3;
         }
 
@@ -154,6 +149,17 @@
             font-size: 1.3em;
             font-weight: bold;
             color: #333;
+            flex: 1;
+        }
+
+        .activity-input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1em;
+            font-weight: bold;
         }
 
         .activity-time {
@@ -165,22 +171,13 @@
         }
 
         .activity-controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        .activity-controls input {
-            flex: 1;
-            padding: 8px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            text-align: center;
+            display: none;
         }
 
         .main-controls {
             display: flex;
             gap: 15px;
-            margin-top: 25px;
+            margin-top: 20px;
         }
 
         .main-controls button {
@@ -224,9 +221,9 @@
 
         .status {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 15px;
             font-size: 1.1em;
-            color: #666;
+            color: #667eea;
             font-weight: bold;
         }
 
@@ -245,26 +242,24 @@
                 <span class="total-label">总时长：</span>
                 <span class="total-value" id="totalTime">30:00</span>
             </div>
-            <h3>快速设置（应用到所有活动）</h3>
+            <h3>快速设置每项时长</h3>
             <div class="preset-buttons">
-                <button class="preset-btn" onclick="setAllTimes(3)">每项 3 分钟</button>
-                <button class="preset-btn" onclick="setAllTimes(10)">每项 10 分钟</button>
-            </div>
-            <div class="custom-time">
-                <input type="number" id="customMinutes" min="1" max="60" placeholder="自定义分钟数">
+                <button class="preset-btn" onclick="setAllTimes(3)">3分钟</button>
+                <button class="preset-btn" onclick="setAllTimes(10)">10分钟</button>
+                <input type="number" id="customMinutes" min="1" max="60" placeholder="自定义">
                 <button onclick="applyCustomTime()">应用</button>
             </div>
+            
+            <div class="main-controls">
+                <button class="start-btn" id="startBtn" onclick="startTimer()">开始</button>
+                <button class="pause-btn" id="pauseBtn" onclick="pauseTimer()" disabled>暂停</button>
+                <button class="reset-btn" onclick="resetTimer()">重置</button>
+            </div>
+            
+            <div class="status" id="status">准备就绪</div>
         </div>
 
         <div id="activities"></div>
-
-        <div class="main-controls">
-            <button class="start-btn" id="startBtn" onclick="startTimer()">开始</button>
-            <button class="pause-btn" id="pauseBtn" onclick="pauseTimer()" disabled>暂停</button>
-            <button class="reset-btn" onclick="resetTimer()">重置</button>
-        </div>
-
-        <div class="status" id="status">准备就绪</div>
     </div>
 
     <script>
@@ -295,10 +290,13 @@
                 div.innerHTML = `
                     <div class="activity-header">
                         <div class="activity-name">${activity.name}</div>
+                        <select class="activity-input" id="input-${index}" onchange="updateActivityTime(${index})">
+                            ${generateTimeOptions(Math.floor(activity.time / 60))}
+                        </select>
                     </div>
                     <div class="activity-time" id="time-${index}">${formatTime(activity.time)}</div>
                     <div class="activity-controls">
-                        <input type="number" id="input-${index}" min="1" max="60" 
+                        <input type="number" id="old-input-${index}" min="1" max="60" 
                                value="${Math.floor(activity.time / 60)}" 
                                onchange="updateActivityTime(${index})"
                                placeholder="分钟">
@@ -306,6 +304,15 @@
                 `;
                 container.appendChild(div);
             });
+        }
+
+        function generateTimeOptions(selectedMinutes) {
+            let options = '';
+            for (let i = 1; i <= 60; i++) {
+                const selected = i === selectedMinutes ? 'selected' : '';
+                options += `<option value="${i}" ${selected}>${i}分钟</option>`;
+            }
+            return options;
         }
 
         function formatTime(seconds) {
@@ -317,7 +324,10 @@
         function setAllTimes(minutes) {
             activities.forEach((activity, index) => {
                 activity.time = minutes * 60;
-                document.getElementById(`input-${index}`).value = minutes;
+                const selectElement = document.getElementById(`input-${index}`);
+                if (selectElement) {
+                    selectElement.value = minutes;
+                }
                 document.getElementById(`time-${index}`).textContent = formatTime(activity.time);
             });
             updateTotalTime();
@@ -332,8 +342,8 @@
         }
 
         function updateActivityTime(index) {
-            const input = document.getElementById(`input-${index}`);
-            const minutes = parseInt(input.value);
+            const selectElement = document.getElementById(`input-${index}`);
+            const minutes = parseInt(selectElement.value);
             if (minutes && minutes > 0 && minutes <= 60) {
                 activities[index].time = minutes * 60;
                 document.getElementById(`time-${index}`).textContent = formatTime(activities[index].time);

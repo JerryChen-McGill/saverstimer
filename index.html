@@ -191,23 +191,28 @@
             transition: all 0.3s;
         }
 
-        .start-btn {
+        .play-pause-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            position: relative;
         }
 
-        .start-btn:hover {
+        .play-pause-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .pause-btn {
+        .play-pause-btn.paused {
             background: #ffa726;
-            color: white;
         }
 
-        .pause-btn:hover {
+        .play-pause-btn.paused:hover {
             background: #fb8c00;
+        }
+
+        .play-pause-icon {
+            font-size: 1.2em;
+            display: inline-block;
         }
 
         .reset-btn {
@@ -231,9 +236,268 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        .activity-item {
+            cursor: pointer;
+        }
+
+        .activity-item.active {
+            cursor: pointer;
+        }
+
+        /* 主视图弹窗样式 */
+        .main-view-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .main-view-modal.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .main-view-content {
+            background: white;
+            border-radius: 30px;
+            padding: 60px 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            min-height: 400px;
+            transition: all 0.3s ease;
+        }
+
+        .main-view-content.transition {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .main-view-single {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 40px;
+            transition: opacity 0.3s ease;
+        }
+
+        .main-view-transition {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 400px;
+        }
+
+        .main-view-previous {
+            flex: 0 0 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            border-bottom: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .main-view-current {
+            flex: 0 0 60%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .main-view-transition.fade-out .main-view-previous {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .main-view-transition.fade-out .main-view-current {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .main-view-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .main-view-close:hover {
+            background: #e0e0e0;
+            transform: rotate(90deg);
+        }
+
+        .main-view-title {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 40px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-view-timer {
+            font-size: 6em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-view-title-small {
+            font-size: 1.5em;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .main-view-timer-small {
+            font-size: 3em;
+            font-weight: bold;
+            color: #999;
+            font-family: 'Courier New', monospace;
+        }
+
+        .add-time-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #e8e8e8;
+            color: #666;
+            border: 1px solid #d0d0d0;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: normal;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: none;
+        }
+
+        .add-time-btn:hover {
+            background: #d8d8d8;
+            color: #555;
+            border-color: #c0c0c0;
+        }
+
+        .add-time-btn:active {
+            background: #d0d0d0;
+        }
+
+        .add-time-btn-previous {
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: #e8e8e8;
+            color: #666;
+            border: 1px solid #d0d0d0;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: normal;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-time-btn-previous:hover {
+            background: #d8d8d8;
+            color: #555;
+            border-color: #c0c0c0;
+        }
+
+        @media (max-width: 600px) {
+            .main-view-content {
+                padding: 40px 30px;
+            }
+
+            .main-view-title {
+                font-size: 2em;
+                margin-bottom: 30px;
+            }
+
+            .main-view-timer {
+                font-size: 4em;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- 主视图弹窗 -->
+    <div class="main-view-modal" id="mainViewModal" onclick="handleModalClick(event)">
+        <div class="main-view-content" id="mainViewContent" onclick="event.stopPropagation()">
+            <button class="main-view-close" onclick="closeMainView()">×</button>
+            
+            <!-- 单环节显示 -->
+            <div class="main-view-single" id="mainViewSingle">
+                <div class="main-view-title" id="mainViewTitle">活动名称</div>
+                <div class="main-view-timer" id="mainViewTimer">00:00</div>
+                <button class="add-time-btn" onclick="addTime(1)">加时1分钟</button>
+            </div>
+            
+            <!-- 过渡显示（上下分块） -->
+            <div class="main-view-transition" id="mainViewTransition" style="display: none;">
+                <div class="main-view-previous">
+                    <div class="main-view-title-small" id="previousViewTitle">上一个环节</div>
+                    <div class="main-view-timer-small" id="previousViewTimer">00:00</div>
+                    <button class="add-time-btn-previous" onclick="addTimeToPrevious()">再来1分钟</button>
+                </div>
+                <div class="main-view-current">
+                    <div class="main-view-title" id="currentViewTitle">当前环节</div>
+                    <div class="main-view-timer" id="currentViewTimer">00:00</div>
+                    <button class="add-time-btn" onclick="addTime(1)">加时1分钟</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <h1>SAVERS 计时器</h1>
         
@@ -246,13 +510,13 @@
             <div class="preset-buttons">
                 <button class="preset-btn" onclick="setAllTimes(3)">3分钟</button>
                 <button class="preset-btn" onclick="setAllTimes(10)">10分钟</button>
-                <input type="number" id="customMinutes" min="1" max="60" placeholder="自定义">
-                <button onclick="applyCustomTime()">应用</button>
+                <input type="number" id="customMinutes" min="1" max="60" placeholder="自定义" oninput="handleCustomTimeInput(event)">
             </div>
             
             <div class="main-controls">
-                <button class="start-btn" id="startBtn" onclick="startTimer()">开始</button>
-                <button class="pause-btn" id="pauseBtn" onclick="pauseTimer()" disabled>暂停</button>
+                <button class="play-pause-btn" id="playPauseBtn" onclick="togglePlayPause()">
+                    <span class="play-pause-icon" id="playPauseIcon">▶</span>
+                </button>
                 <button class="reset-btn" onclick="resetTimer()">重置</button>
             </div>
             
@@ -278,6 +542,14 @@
         let timer = null;
         let remainingTime = 0;
         let endTime = 0;
+        let isMainViewOpen = false;
+        let previousActivityIndex = -1;
+        let previousActivityTime = 0;
+        let transitionTimer = null;
+        let isInTransition = false;
+        let activityStartTime = {}; // 记录每个环节开始时的原始时间
+        let activityActualTime = {}; // 记录每个环节的实际使用时长
+        let activityAddedTime = {}; // 记录每个环节的加时时长总和
 
         function initializeActivities() {
             const container = document.getElementById('activities');
@@ -302,6 +574,17 @@
                                placeholder="分钟">
                     </div>
                 `;
+                // 添加点击事件，点击活动面板时打开主视图
+                div.addEventListener('click', function(e) {
+                    // 如果点击的是select下拉框，不触发打开主视图
+                    if (e.target.tagName === 'SELECT') {
+                        return;
+                    }
+                    // 如果该活动正在计时，打开主视图
+                    if (isRunning && !isPaused && currentIndex === index) {
+                        showMainView();
+                    }
+                });
                 container.appendChild(div);
             });
         }
@@ -333,11 +616,45 @@
             updateTotalTime();
         }
 
-        function applyCustomTime() {
-            const minutes = parseInt(document.getElementById('customMinutes').value);
-            if (minutes && minutes > 0 && minutes <= 60) {
-                setAllTimes(minutes);
-                document.getElementById('customMinutes').value = '';
+        function handleCustomTimeInput(event) {
+            const input = event.target;
+            let value = input.value;
+            
+            // 只允许输入数字，过滤非数字字符
+            value = value.replace(/\D/g, '');
+            input.value = value;
+            
+            // 如果有有效数字，实时更新所有活动的时长
+            if (value) {
+                const minutes = parseInt(value);
+                if (minutes > 0 && minutes <= 60) {
+                    setAllTimes(minutes);
+                }
+            }
+        }
+
+        function togglePlayPause() {
+            if (!isRunning) {
+                startTimer();
+            } else if (isPaused) {
+                startTimer(); // 恢复
+            } else {
+                pauseTimer();
+            }
+        }
+
+        function updatePlayPauseButton() {
+            const btn = document.getElementById('playPauseBtn');
+            const icon = document.getElementById('playPauseIcon');
+            
+            if (!isRunning || isPaused) {
+                // 显示播放图标
+                icon.textContent = '▶';
+                btn.classList.remove('paused');
+            } else {
+                // 显示暂停图标
+                icon.textContent = '⏸';
+                btn.classList.add('paused');
             }
         }
 
@@ -352,8 +669,226 @@
         }
 
         function updateTotalTime() {
-            const total = activities.reduce((sum, activity) => sum + activity.time, 0);
+            // 计算初始总时长
+            const initialTotal = activities.reduce((sum, activity) => sum + activity.time, 0);
+            
+            // 计算所有环节的加时时长总和
+            const totalAddedTime = Object.values(activityAddedTime).reduce((sum, time) => sum + time, 0);
+            
+            // 总时长 = 初始总时长 + 所有加时时长
+            const total = initialTotal + totalAddedTime;
             document.getElementById('totalTime').textContent = formatTime(total);
+        }
+
+        function showMainView() {
+            if (!isRunning || isPaused) return;
+            
+            const modal = document.getElementById('mainViewModal');
+            modal.classList.add('show');
+            isMainViewOpen = true;
+            
+            updateMainViewDisplay();
+        }
+
+        function closeMainView() {
+            const modal = document.getElementById('mainViewModal');
+            modal.classList.remove('show');
+            isMainViewOpen = false;
+        }
+
+        function handleModalClick(event) {
+            // 如果点击的是背景（遮罩层），关闭弹窗
+            if (event.target.id === 'mainViewModal') {
+                closeMainView();
+            }
+        }
+
+        function updateMainViewDisplay() {
+            if (!isMainViewOpen || !isRunning || isPaused) return;
+            
+            if (isInTransition) {
+                // 过渡模式：更新两个视图
+                const currentTitle = document.getElementById('currentViewTitle');
+                const currentTimer = document.getElementById('currentViewTimer');
+                const previousTitle = document.getElementById('previousViewTitle');
+                const previousTimer = document.getElementById('previousViewTimer');
+                
+                currentTitle.textContent = activities[currentIndex].name;
+                currentTimer.textContent = formatTime(remainingTime);
+                
+                if (previousActivityIndex >= 0) {
+                    previousTitle.textContent = activities[previousActivityIndex].name;
+                    previousTimer.textContent = formatTime(previousActivityTime);
+                }
+            } else {
+                // 单环节模式
+                const title = document.getElementById('mainViewTitle');
+                const timer = document.getElementById('mainViewTimer');
+                
+                title.textContent = activities[currentIndex].name;
+                timer.textContent = formatTime(remainingTime);
+            }
+        }
+
+        function updateMainView() {
+            updateMainViewDisplay();
+        }
+
+        function addTime(minutes) {
+            if (!isRunning || isPaused) return;
+            
+            // 计算加时前已使用的时间
+            const originalTime = activityStartTime[currentIndex] || activities[currentIndex].time;
+            const elapsedBeforeAdd = originalTime - remainingTime;
+            
+            // 累加到实际使用时长
+            if (!activityActualTime[currentIndex]) {
+                activityActualTime[currentIndex] = 0;
+            }
+            activityActualTime[currentIndex] += elapsedBeforeAdd;
+            
+            // 加时
+            const additionalSeconds = minutes * 60;
+            remainingTime += additionalSeconds;
+            endTime = Date.now() + remainingTime * 1000;
+            
+            // 记录加时时长
+            if (!activityAddedTime[currentIndex]) {
+                activityAddedTime[currentIndex] = 0;
+            }
+            activityAddedTime[currentIndex] += additionalSeconds;
+            
+            // 更新记录的开始时间（加时后的新时间）
+            activityStartTime[currentIndex] = remainingTime;
+            
+            // 更新总时长
+            updateTotalTime();
+            
+            updateMainViewDisplay();
+        }
+
+        function addTimeToPrevious() {
+            if (!isRunning || isPaused || !isInTransition || previousActivityIndex < 0) return;
+            
+            // 计算当前环节已经倒计时的秒数
+            const currentOriginalTime = activityStartTime[currentIndex] || activities[currentIndex].time;
+            const currentElapsed = currentOriginalTime - remainingTime; // 已倒计时的秒数
+            
+            // 上一个环节获得：1分钟 - 当前环节已倒计时的秒数
+            // 例如：当前环节已倒计时8秒，则上一个环节获得 60 - 8 = 52秒
+            const newTimeForPrevious = 60 - currentElapsed;
+            
+            // 记录当前环节的实际使用时长（用于统计）
+            if (!activityActualTime[currentIndex]) {
+                activityActualTime[currentIndex] = 0;
+            }
+            activityActualTime[currentIndex] += currentElapsed;
+            
+            // 保存原来的当前环节索引（将被跳过）
+            const skippedIndex = currentIndex;
+            
+            // 结束过渡，切换到单环节模式
+            endTransition();
+            
+            // 切换到上一个环节
+            currentIndex = previousActivityIndex;
+            remainingTime = newTimeForPrevious; // 显示实际获得的秒数（如52秒）
+            endTime = Date.now() + remainingTime * 1000;
+            
+            // 记录上一个环节的加时时长（固定60秒，用于总时长计算）
+            if (!activityAddedTime[currentIndex]) {
+                activityAddedTime[currentIndex] = 0;
+            }
+            activityAddedTime[currentIndex] += 60; // 固定记录60秒作为加时时长
+            
+            // 记录新环节的开始时间（用于后续计算）
+            activityStartTime[currentIndex] = remainingTime;
+            
+            // 立即更新总时长
+            updateTotalTime();
+            
+            // 更新活动状态
+            document.querySelectorAll('.activity-item').forEach((item, index) => {
+                item.classList.remove('active', 'completed');
+                if (index === currentIndex) {
+                    item.classList.add('active');
+                } else if (index < currentIndex) {
+                    item.classList.add('completed');
+                }
+                // 被跳过的环节保持未完成状态（移除completed）
+                if (index === skippedIndex) {
+                    item.classList.remove('completed');
+                }
+            });
+            
+            document.getElementById('status').textContent = `进行中: ${activities[currentIndex].name}`;
+            document.getElementById(`time-${currentIndex}`).textContent = formatTime(remainingTime);
+            
+            // 清除被跳过环节的倒计时显示，恢复为初始时间
+            if (skippedIndex < activities.length) {
+                document.getElementById(`time-${skippedIndex}`).textContent = formatTime(activities[skippedIndex].time);
+            }
+            
+            updateMainViewDisplay();
+        }
+
+        function startTransition(prevIndex, prevTime) {
+            isInTransition = true;
+            previousActivityIndex = prevIndex;
+            previousActivityTime = prevTime;
+            
+            const content = document.getElementById('mainViewContent');
+            const single = document.getElementById('mainViewSingle');
+            const transition = document.getElementById('mainViewTransition');
+            
+            content.classList.add('transition');
+            single.style.display = 'none';
+            transition.style.display = 'flex';
+            
+            // 更新过渡视图内容
+            const previousTitle = document.getElementById('previousViewTitle');
+            const previousTimer = document.getElementById('previousViewTimer');
+            const currentTitle = document.getElementById('currentViewTitle');
+            const currentTimer = document.getElementById('currentViewTimer');
+            
+            previousTitle.textContent = activities[prevIndex].name;
+            previousTimer.textContent = formatTime(prevTime);
+            currentTitle.textContent = activities[currentIndex].name;
+            currentTimer.textContent = formatTime(remainingTime);
+            
+            // 10秒后结束过渡
+            if (transitionTimer) {
+                clearTimeout(transitionTimer);
+            }
+            transitionTimer = setTimeout(() => {
+                endTransition();
+            }, 10000);
+        }
+
+        function endTransition() {
+            if (!isInTransition) return;
+            
+            isInTransition = false;
+            const content = document.getElementById('mainViewContent');
+            const single = document.getElementById('mainViewSingle');
+            const transition = document.getElementById('mainViewTransition');
+            
+            // 添加淡出动画
+            transition.classList.add('fade-out');
+            
+            setTimeout(() => {
+                content.classList.remove('transition');
+                single.style.display = 'flex';
+                transition.style.display = 'none';
+                transition.classList.remove('fade-out');
+                // 更新单环节显示
+                updateMainViewDisplay();
+            }, 300);
+            
+            if (transitionTimer) {
+                clearTimeout(transitionTimer);
+                transitionTimer = null;
+            }
         }
 
         let audioContext = null;
@@ -408,23 +943,59 @@
                 document.querySelectorAll('.activity-item').forEach(item => {
                     item.classList.remove('active', 'completed');
                 });
+                // 清除过渡状态
+                if (isInTransition) {
+                    endTransition();
+                }
+                // 重置记录
+                activityStartTime = {};
+                activityActualTime = {};
+                activityAddedTime = {};
             }
             
             isRunning = true;
             isPaused = false;
             endTime = Date.now() + remainingTime * 1000;
-            document.getElementById('startBtn').disabled = true;
-            document.getElementById('pauseBtn').disabled = false;
+            
+            // 记录当前环节的开始时间
+            activityStartTime[currentIndex] = remainingTime;
+            
+            // 更新播放/暂停按钮状态
+            updatePlayPauseButton();
             document.getElementById('status').textContent = `进行中: ${activities[currentIndex].name}`;
             document.getElementById(`activity-${currentIndex}`).classList.add('active');
+            
+            // 显示主视图
+            showMainView();
             
             timer = setInterval(() => {
                 const now = Date.now();
                 remainingTime = Math.max(0, Math.ceil((endTime - now) / 1000));
                 document.getElementById(`time-${currentIndex}`).textContent = formatTime(remainingTime);
                 
+                // 更新主视图中的倒计时
+                updateMainView();
+                
                 if (remainingTime <= 0) {
                     playBeep();
+                    
+                    // 记录当前环节的实际使用时长（最后一段）
+                    const originalTime = activityStartTime[currentIndex] || activities[currentIndex].time;
+                    const finalElapsed = originalTime; // 最后一段完整使用完
+                    if (!activityActualTime[currentIndex]) {
+                        activityActualTime[currentIndex] = 0;
+                    }
+                    activityActualTime[currentIndex] += finalElapsed;
+                    
+                    // 保存上一个环节的信息
+                    const prevIndex = currentIndex;
+                    const prevTime = activities[prevIndex].time; // 上一个环节的原始时长
+                    
+                    // 更新主页显示：显示该环节的总时长（原始时长 + 固定的加时时长）
+                    const addedTime = activityAddedTime[prevIndex] || 0; // 固定的加时时长（60秒）
+                    const totalTimeUsed = prevTime + addedTime;
+                    document.getElementById(`time-${prevIndex}`).textContent = formatTime(totalTimeUsed);
+                    
                     document.getElementById(`activity-${currentIndex}`).classList.remove('active');
                     document.getElementById(`activity-${currentIndex}`).classList.add('completed');
                     
@@ -433,14 +1004,30 @@
                     if (currentIndex < activities.length) {
                         remainingTime = activities[currentIndex].time;
                         endTime = Date.now() + remainingTime * 1000;
+                        
+                        // 记录新环节的开始时间
+                        activityStartTime[currentIndex] = remainingTime;
+                        
                         document.getElementById(`activity-${currentIndex}`).classList.add('active');
                         document.getElementById('status').textContent = `进行中: ${activities[currentIndex].name}`;
+                        
+                        // 如果主视图没有打开，自动弹出
+                        if (!isMainViewOpen) {
+                            showMainView();
+                        }
+                        
+                        // 启动过渡显示（10秒）
+                        startTransition(prevIndex, prevTime);
                     } else {
+                        // 全部完成
+                        if (isInTransition) {
+                            endTransition();
+                        }
                         clearInterval(timer);
                         isRunning = false;
-                        document.getElementById('startBtn').disabled = false;
-                        document.getElementById('pauseBtn').disabled = true;
+                        updatePlayPauseButton();
                         document.getElementById('status').textContent = '全部完成！恭喜你！🎉';
+                        closeMainView();
                         playBeep();
                         setTimeout(playBeep, 200);
                         setTimeout(playBeep, 400);
@@ -454,8 +1041,7 @@
             
             isPaused = true;
             clearInterval(timer);
-            document.getElementById('startBtn').disabled = false;
-            document.getElementById('pauseBtn').disabled = true;
+            updatePlayPauseButton();
             document.getElementById('status').textContent = '已暂停';
         }
 
@@ -465,8 +1051,24 @@
             isPaused = false;
             currentIndex = 0;
             
-            document.getElementById('startBtn').disabled = false;
-            document.getElementById('pauseBtn').disabled = true;
+            // 清除过渡状态
+            if (isInTransition) {
+                endTransition();
+            }
+            if (transitionTimer) {
+                clearTimeout(transitionTimer);
+                transitionTimer = null;
+            }
+            
+            // 清除记录
+            activityStartTime = {};
+            activityActualTime = {};
+            activityAddedTime = {};
+            
+            // 关闭主视图
+            closeMainView();
+            
+            updatePlayPauseButton();
             document.getElementById('status').textContent = '准备就绪';
             
             document.querySelectorAll('.activity-item').forEach(item => {
@@ -476,10 +1078,14 @@
             activities.forEach((activity, index) => {
                 document.getElementById(`time-${index}`).textContent = formatTime(activity.time);
             });
+            
+            // 更新总时长
+            updateTotalTime();
         }
 
         initializeActivities();
         updateTotalTime();
+        updatePlayPauseButton();
     </script>
 </body>
 </html>
